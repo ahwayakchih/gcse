@@ -128,9 +128,9 @@
 
 			foreach ($data->responseData->results as $result) {
 				$entry = new XMLElement('entry');
-				$entry->appendChild(new XMLElement('url', General::sanitize($result->url)));
-				$entry->appendChild(new XMLElement('title', General::sanitize($result->titleNoFormatting)));
-				$entry->appendChild(new XMLElement('content', General::sanitize($result->content)));
+				$entry->appendChild(new XMLElement('url', $result->url));
+				$entry->appendChild(new XMLElement('title', $result->titleNoFormatting));
+				$entry->appendChild(new XMLElement('content', $result->content));
 				$xml->appendChild($entry);
 			}
 /*
