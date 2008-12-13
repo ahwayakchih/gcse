@@ -1,0 +1,20 @@
+a.help {
+	padding-left: 51px;
+	background-image: url("images/help.png");
+}
+
+#help {
+	display: none;
+}
+#help.settings {
+	display: block;
+}
+
+p.help a.gcse {
+	display: block;
+	background-image: url('http://www.google.com/images/poweredby_transparent/poweredby_FFFFFF.gif');
+	background-repeat: no-repeat;
+	background-position: top left;
+	padding-top: 22px;
+	padding-left: 2px;
+}
