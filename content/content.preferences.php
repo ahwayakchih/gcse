@@ -69,8 +69,8 @@
 			$fieldset->setAttribute('id', 'help');
 			$fieldset->appendChild(new XMLElement('legend', 'Information'));
 			$content = <<<END
-			<p>With <a href="http://www.google.com/coop/cse/" title="Read more">Google Custom Search Engine</a> you can add search functionality to your Symphony orchestrated site.</p>
-			<p>To do that you have to add "Google Custom Search Engine" data source to page where you want to get results. Data source needs "q" parameter, which you can pass through URL schema or GET/POST variables. It also handles page parameter which tells it which page of search results it should provide.</p>
+			<p>With <a href="http://www.google.com/coop/cse/" title="Read more">Google Custom Search Engine</a> and <a href="http://code.google.com/apis/ajaxsearch/">Google AJAX API</a> you can add search functionality to your Symphony orchestrated site.</p>
+			<p>To do that you have to add "Google Custom Search Engine" data source to page where you want to get results. Data source needs "q" parameter, which you can pass through URL schema or GET/POST variables. It also handles "page" parameter which tells it which page of search results it should provide.</p>
 			<p>For example you can put this in XSLT source of page:</p>
 			<p><code>
 &lt;xsl:template match="data"&gt;<br />
