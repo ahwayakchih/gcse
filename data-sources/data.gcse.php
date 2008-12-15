@@ -2,7 +2,22 @@
 	Class datasourceGCSE extends Datasource{
 		public $dsParamFILTERS = array(
 				'q' => '{$q}',
+				'page' => '{$page}'
 		);
+
+		function __construct(&$parent, $env=NULL, $process_params=true){
+			global $settings;
+
+			$qname = ($settings['gcse']['qname'] ? $settings['gcse']['qname'] : 'q');
+			$pname = ($settings['gcse']['pname'] ? $settings['gcse']['pname'] : 'page');
+
+			$this->dsParamFILTERS = array(
+				$qname => '{$'.$qname.'}',
+				$pname => '{$'.$pname.'}'
+			);
+
+			parent::__construct($parent, $env, $process_params);
+		}
 
 		function example(){
 			return '
@@ -23,23 +38,31 @@
 		}
 
 		function about(){
+			global $settings;
+
+			$qname = ($settings['gcse']['qname'] ? $settings['gcse']['qname'] : 'q');
+			$pname = ($settings['gcse']['pname'] ? $settings['gcse']['pname'] : 'page');
+
 			return array(
 				"name" => "Google Custom Search Engine",
-				"description" => "Calls Google Search API and returns results",
+				"description" => "Calls Google AJAX Search API and returns results in XML.",
 				"author" => array("name" => "Marcin Konicki",
 					"website" => "http://ahwayakchih.neoni.net",
 					"email" => "ahwayakchih@neoni.net"),
-				"version" => "2.0",
-				"release-date" => "2008-12-13",
-				//"recognised-url-param" => array('q'),
+				"version" => "2.1",
+				"release-date" => "2008-12-15",
+				"recognised-url-param" => array($qname, $pname),
 			);
 		}
 
 		function grab($param=array()){
 			global $settings;
 
-			$q = trim($this->dsParamFILTERS['q']);
-			if (!$q) $q = trim($_REQUEST['q']);
+			$qname = ($settings['gcse']['qname'] ? $settings['gcse']['qname'] : 'q');
+			$pname = ($settings['gcse']['pname'] ? $settings['gcse']['pname'] : 'page');
+
+			$q = trim($this->dsParamFILTERS[$qname]);
+			if (!$q) $q = trim($_REQUEST[$qname]);
 			if (!$q) return NULL;
 
 			$p = '';
@@ -55,8 +78,8 @@
 				$p .= '&rsz=large';
 			}
 
-			$page = intval(trim($this->_env['url']['page']));
-			if (!$page) $page = intval(trim($_REQUEST['page']));
+			$page = intval(trim($this->_env['url'][$pname]));
+			if (!$page) $page = intval(trim($_REQUEST[$pname]));
 			$page -= 1; // Pagination counts from 1, not 0
 			if (!$page || $page < 0) $page = 0;
 			$p .= '&start='.($page*$size);

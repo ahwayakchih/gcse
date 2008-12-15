@@ -2,9 +2,9 @@
 Data source: Google Custom Search Engine
 ------------------------------------
 
-Version: 2.0
+Version: 2.1
 Author: Marcin Konicki (http://ahwayakchih.neoni.net)
-Build Date: 13 December 2008
+Build Date: 15 December 2008
 Requirements: Symphony version 2.0 or later.
 
 

@@ -69,7 +69,7 @@
 			$fieldset->setAttribute('id', 'help');
 			$fieldset->appendChild(new XMLElement('legend', 'Information'));
 			$content = <<<END
-			<p>With <a href="http://www.google.com/coop/cse/" title="Read more">Google Custom Search Engine</a> and <a href="http://code.google.com/apis/ajaxsearch/">Google AJAX API</a> you can add search functionality to your Symphony orchestrated site.</p>
+			<p>With <a href="http://www.google.com/coop/cse/" title="Read more">Google Custom Search Engine</a> and <a href="http://code.google.com/apis/ajaxsearch/">Google AJAX Search API</a> you can add search functionality to your Symphony orchestrated site.</p>
 			<p>To do that you have to add "Google Custom Search Engine" data source to page where you want to get results. Data source needs "q" parameter, which you can pass through URL schema or GET/POST variables. It also handles "page" parameter which tells it which page of search results it should provide.</p>
 			<p>For example you can put this in XSLT source of page:</p>
 			<p><code>
@@ -103,6 +103,23 @@ END;
 			$p->setAttribute('class', 'help');
 			$p->appendChild(Widget::Anchor('Custom search', 'http://www.google.com/coop/cse/', 'Read Google Custom Search Engine documentation', 'gcse'));
 			$fieldset->appendChild($p);
+
+			$div = new XMLElement('div');
+			$div->setAttribute('class', 'group');
+
+			$label = Widget::Label('Query parameter name');
+			$label->appendChild(new XMLElement('i', 'Required. Defaults to "q".'));
+			if (!($temp = $this->_Parent->Configuration->get('qname', 'gcse'))) $temp = 'q';
+			$label->appendChild(Widget::Input('fields[qname]', $temp));
+			$div->appendChild($label);
+
+			$label = Widget::Label('Page number parameter name');
+			$label->appendChild(new XMLElement('i', 'Required. Defaults to "page".'));
+			if (!($temp = $this->_Parent->Configuration->get('pname', 'gcse'))) $temp = 'page';
+			$label->appendChild(Widget::Input('fields[pname]', $temp));
+			$div->appendChild($label);
+
+			$fieldset->appendChild($div);
 
 			$label = Widget::Label('Number of results per page');
 			$temp = $this->_Parent->Configuration->get('size', 'gcse');
@@ -169,6 +186,12 @@ END;
 
 		function save() {
 			$fields = $_POST['fields'];
+
+			if ($temp = preg_replace('/[^a-zA-Z]/', '', $fields['qname'])) $this->_Parent->Configuration->set('qname', $temp, 'gcse');
+			else $this->_Parent->Configuration->set('qname', 'q', 'gcse');
+
+			if ($temp = preg_replace('/[^a-zA-Z]/', '', $fields['pname'])) $this->_Parent->Configuration->set('pname', $temp, 'gcse');
+			else $this->_Parent->Configuration->set('pname', 'page', 'gcse');
 
 			if ($fields['size'] == 4 || $fields['size'] == 8) {
 				$this->_Parent->Configuration->set('size', intval($fields['size']), 'gcse');

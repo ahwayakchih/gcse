@@ -3,12 +3,12 @@
 	
 		public function about(){
 			return array('name' => 'Google Custom Search Engine',
-						 'version' => '2.0',
-						 'release-date' => '2008-12-13',
+						 'version' => '2.1',
+						 'release-date' => '2008-12-15',
 						 'author' => array('name' => 'Marcin Konicki',
 										   'website' => 'http://ahwayakchih.neoni.net',
 										   'email' => 'ahwayakchih@neoni.net'),
-						 'description' => 'Use Google Search API as data source in Symphony.'
+						 'description' => 'Use Google AJAX Search API as data source in Symphony.'
 				 		);
 		}
 
