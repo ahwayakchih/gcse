@@ -5,8 +5,6 @@
 
 		public $languages;
 
-		private $_driver;
-
 		function __construct(&$parent){
 			parent::__construct($parent);
 
@@ -48,8 +46,6 @@
 				'Swedish'=>'sv',
 				'Turkish'=>'tr'
 			);
-
-			$this->_driver = $this->_Parent->ExtensionManager->create('gcse');
 		}
 
 		function view(){
@@ -75,7 +71,7 @@
 			<p><code>
 &lt;xsl:template match="data"&gt;<br />
 &lt;form action="{\$root}/{\$current-page}" method="GET"&gt;<br />
-&lt;input name="q" value="{gcse/@query}" /&gt;<br />
+&lt;input name="q" value="{gcse/query}" /&gt;<br />
 &lt;input type="submit" value="Search" /&gt;<br />
 &lt;/form&gt;<br />
 &lt;ul class="entryList"&gt;<br />
@@ -149,7 +145,7 @@ END;
 			$div->setAttribute('class', 'group');
 
 			$label = Widget::Label('Restrict language');
-			$label->appendChild(new XMLElement('i', 'Search documents in selected language'));
+			$label->appendChild(new XMLElement('i', 'Search data in selected language'));
 			$options = array();
 			$temp = $this->_Parent->Configuration->get('lang', 'gcse');
 			foreach ($this->languages as $name => $code) {
@@ -159,7 +155,7 @@ END;
 			$div->appendChild($label);
 
 			$label = Widget::Label('Safety level');
-			$label->appendChild(new XMLElement('i', 'Safety level or search results'));
+			$label->appendChild(new XMLElement('i', 'Safety level of search results'));
 			$vars = array('Disabled' => 'off', 'Moderate' => 'moderate', 'Active' => 'active');
 			$options = array();
 			$temp = $this->_Parent->Configuration->get('safe', 'gcse');
@@ -198,7 +194,7 @@ END;
 			}
 
 			foreach (array('key', 'cx', 'cref') as $id) {
-				if (trim($fields[$id])) $this->_Parent->Configuration->set($id, trim($fields[$id]), 'gcse');
+				$this->_Parent->Configuration->set($id, trim($fields[$id]), 'gcse');
 			}
 
 			if (in_array($fields['lang'], $this->languages)) $this->_Parent->Configuration->set('lang', trim($fields['lang']), 'gcse');

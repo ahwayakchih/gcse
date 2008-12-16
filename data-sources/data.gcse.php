@@ -1,8 +1,8 @@
 <?php
 	Class datasourceGCSE extends Datasource{
 		public $dsParamFILTERS = array(
-				'q' => '{$q}',
-				'page' => '{$page}'
+			'q' => '{$q}',
+			'page' => '{$page}'
 		);
 
 		function __construct(&$parent, $env=NULL, $process_params=true){
