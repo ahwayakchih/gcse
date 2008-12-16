@@ -2,14 +2,14 @@
 	Class datasourceGCSE extends Datasource{
 		public $dsParamFILTERS = array(
 			'q' => '{$q}',
-			'page' => '{$page}'
+			'p' => '{$p}'
 		);
 
 		function __construct(&$parent, $env=NULL, $process_params=true){
 			global $settings;
 
 			$qname = ($settings['gcse']['qname'] ? $settings['gcse']['qname'] : 'q');
-			$pname = ($settings['gcse']['pname'] ? $settings['gcse']['pname'] : 'page');
+			$pname = ($settings['gcse']['pname'] ? $settings['gcse']['pname'] : 'p');
 
 			$this->dsParamFILTERS = array(
 				$qname => '{$'.$qname.'}',
@@ -41,7 +41,7 @@
 			global $settings;
 
 			$qname = ($settings['gcse']['qname'] ? $settings['gcse']['qname'] : 'q');
-			$pname = ($settings['gcse']['pname'] ? $settings['gcse']['pname'] : 'page');
+			$pname = ($settings['gcse']['pname'] ? $settings['gcse']['pname'] : 'p');
 
 			return array(
 				"name" => "Google Custom Search Engine",
@@ -59,7 +59,7 @@
 			global $settings;
 
 			$qname = ($settings['gcse']['qname'] ? $settings['gcse']['qname'] : 'q');
-			$pname = ($settings['gcse']['pname'] ? $settings['gcse']['pname'] : 'page');
+			$pname = ($settings['gcse']['pname'] ? $settings['gcse']['pname'] : 'p');
 
 			$q = trim($this->dsParamFILTERS[$qname]);
 			if (!$q) $q = trim($_REQUEST[$qname]);
@@ -78,7 +78,7 @@
 				$p .= '&rsz=large';
 			}
 
-			$page = intval(trim($this->_env['url'][$pname]));
+			$page = intval($this->dsParamFILTERS[$pname]);
 			if (!$page) $page = intval(trim($_REQUEST[$pname]));
 			$page -= 1; // Pagination counts from 1, not 0
 			if (!$page || $page < 0) $page = 0;
