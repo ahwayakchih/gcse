@@ -103,7 +103,7 @@
 
 			$ch = curl_init();
 			if (!$ch) {
-				$error = new XMLElement('error', 'Cannot initialize CURL object.');
+				$error = new XMLElement('error', 'Cannot initialize cURL object.');
 				$xml->appendChild($error);
 				return $xml;
 			}
