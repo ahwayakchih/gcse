@@ -6,8 +6,6 @@
 		);
 
 		function __construct(&$parent, $env=NULL, $process_params=true){
-			global $settings;
-
 			$this->dsParamFILTERS = $this->__getParamFilters();
 
 			parent::__construct($parent, $env, $process_params);
@@ -23,10 +21,10 @@
 				'safe' => ($settings['gcse']['safe'] ? $settings['gcse']['safe'] : 'moderate'),
 			);
 
-			if ($settings['gcse']['lang'] && $settings['gcse']['lang'] != '-') $result->dsParamFILTERS['lang'] = $settings['gcse']['lang'];
+			if ($settings['gcse']['lang'] && $settings['gcse']['lang'] != '-') $result['lang'] = $settings['gcse']['lang'];
 
 			foreach (array('key', 'cx', 'cref') as $id) {
-				if ($settings['gcse'][$id]) $result->dsParamFILTERS[$id] = $settings['gcse'][$id];
+				if ($settings['gcse'][$id]) $result[$id] = $settings['gcse'][$id];
 			}
 
 			return $result;
