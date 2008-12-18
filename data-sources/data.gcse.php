@@ -1,27 +1,35 @@
 <?php
 	Class datasourceGCSE extends Datasource{
 		public $dsParamFILTERS = array(
-			'q' => '{$q:$url-q}',
-			'p' => '{$p:$url-p}'
+			'query' => '{$q:$url-q}',
+			'page' => '{$p:$url-p}'
 		);
 
 		function __construct(&$parent, $env=NULL, $process_params=true){
 			global $settings;
 
-			$this->dsParamFILTERS = array(
-				'q' => ($settings['gcse']['qname'] ? $settings['gcse']['qname'] : '{$q:$url-q}'),
-				'p' => ($settings['gcse']['pname'] ? $settings['gcse']['pname'] : '{$p:$url-p}'),
+			$this->dsParamFILTERS = $this->__getParamFilters();
+
+			parent::__construct($parent, $env, $process_params);
+		}
+
+		function __getParamFilters() {
+			global $settings;
+
+			$result = array(
+				'query' => ($settings['gcse']['qname'] ? $settings['gcse']['qname'] : '{$q:$url-q}'),
+				'page' => ($settings['gcse']['pname'] ? $settings['gcse']['pname'] : '{$p:$url-p}'),
 				'size' => ($settings['gcse']['size'] ? $settings['gcse']['size'] : '4'),
 				'safe' => ($settings['gcse']['safe'] ? $settings['gcse']['safe'] : 'moderate'),
 			);
 
-			if ($settings['gcse']['lang'] && $settings['gcse']['lang'] != '-') $this->dsParamFILTERS['lang'] = $settings['gcse']['lang'];
+			if ($settings['gcse']['lang'] && $settings['gcse']['lang'] != '-') $result->dsParamFILTERS['lang'] = $settings['gcse']['lang'];
 
 			foreach (array('key', 'cx', 'cref') as $id) {
-				if ($settings['gcse'][$id]) $this->dsParamFILTERS[$id] = $settings['gcse'][$id];
+				if ($settings['gcse'][$id]) $result->dsParamFILTERS[$id] = $settings['gcse'][$id];
 			}
 
-			parent::__construct($parent, $env, $process_params);
+			return $result;
 		}
 
 		function example(){
@@ -43,6 +51,10 @@
 		}
 
 		function about(){
+			$params = array();
+			foreach (datasourceGCSE::__getParamFilters() as $k => $v) {
+				if (strpos($v, '{$') !== false) $params[] = $v.' // '.$k;
+			}
 			return array(
 				"name" => "Google Custom Search Engine",
 				"description" => "Calls Google AJAX Search API and returns results in XML.",
@@ -51,12 +63,12 @@
 					"email" => "ahwayakchih@neoni.net"),
 				"version" => "2.2",
 				"release-date" => "2008-12-18",
-				"recognised-url-param" => $this->dsParamFILTERS,
+				"recognised-url-param" => $params,
 			);
 		}
 
 		function grab($param=array()){
-			$q = trim($this->dsParamFILTERS['q']);
+			$q = trim($this->dsParamFILTERS['query']);
 			if (!$q) return NULL;
 
 			$p = '';
@@ -72,7 +84,7 @@
 				$p .= '&rsz=large';
 			}
 
-			$page = intval($this->dsParamFILTERS['p']);
+			$page = intval($this->dsParamFILTERS['page']);
 			$page -= 1; // Pagination counts from 1, not 0
 			if (!$page || $page < 0) $page = 0;
 			$p .= '&start='.($page*$size);
