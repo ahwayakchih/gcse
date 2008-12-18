@@ -1,20 +1,25 @@
 <?php
 	Class datasourceGCSE extends Datasource{
 		public $dsParamFILTERS = array(
-			'q' => '{$q}',
-			'p' => '{$p}'
+			'q' => '{$q:$url-q}',
+			'p' => '{$p:$url-p}'
 		);
 
 		function __construct(&$parent, $env=NULL, $process_params=true){
 			global $settings;
 
-			$qname = ($settings['gcse']['qname'] ? $settings['gcse']['qname'] : 'q');
-			$pname = ($settings['gcse']['pname'] ? $settings['gcse']['pname'] : 'p');
-
 			$this->dsParamFILTERS = array(
-				$qname => '{$'.$qname.'}',
-				$pname => '{$'.$pname.'}'
+				'q' => ($settings['gcse']['qname'] ? $settings['gcse']['qname'] : '{$q:$url-q}'),
+				'p' => ($settings['gcse']['pname'] ? $settings['gcse']['pname'] : '{$p:$url-p}'),
+				'size' => ($settings['gcse']['size'] ? $settings['gcse']['size'] : '4'),
+				'safe' => ($settings['gcse']['safe'] ? $settings['gcse']['safe'] : 'moderate'),
 			);
+
+			if ($settings['gcse']['lang'] && $settings['gcse']['lang'] != '-') $this->dsParamFILTERS['lang'] = $settings['gcse']['lang'];
+
+			foreach (array('key', 'cx', 'cref') as $id) {
+				if ($settings['gcse'][$id]) $this->dsParamFILTERS[$id] = $settings['gcse'][$id];
+			}
 
 			parent::__construct($parent, $env, $process_params);
 		}
@@ -38,37 +43,26 @@
 		}
 
 		function about(){
-			global $settings;
-
-			$qname = ($settings['gcse']['qname'] ? $settings['gcse']['qname'] : 'q');
-			$pname = ($settings['gcse']['pname'] ? $settings['gcse']['pname'] : 'p');
-
 			return array(
 				"name" => "Google Custom Search Engine",
 				"description" => "Calls Google AJAX Search API and returns results in XML.",
 				"author" => array("name" => "Marcin Konicki",
 					"website" => "http://ahwayakchih.neoni.net",
 					"email" => "ahwayakchih@neoni.net"),
-				"version" => "2.1",
-				"release-date" => "2008-12-15",
-				"recognised-url-param" => array($qname, $pname),
+				"version" => "2.2",
+				"release-date" => "2008-12-18",
+				"recognised-url-param" => $this->dsParamFILTERS,
 			);
 		}
 
 		function grab($param=array()){
-			global $settings;
-
-			$qname = ($settings['gcse']['qname'] ? $settings['gcse']['qname'] : 'q');
-			$pname = ($settings['gcse']['pname'] ? $settings['gcse']['pname'] : 'p');
-
-			$q = trim($this->dsParamFILTERS[$qname]);
-			if (!$q) $q = trim($_REQUEST[$qname]);
+			$q = trim($this->dsParamFILTERS['q']);
 			if (!$q) return NULL;
 
 			$p = '';
 			$q = preg_replace('/\\\\(["\'])/', '$1', urldecode($q)); // TODO: Symphony tries to do some magic behind the scenes so we have to change it back :( Find out cleaner solution.
 
-			$size = $settings['gcse']['size'] ? $settings['gcse']['size'] : 4;
+			$size = $this->dsParamFILTERS['size'];
 			if ($size <= 4) {
 				$size = 4;
 				$p .= '&rsz=small';
@@ -78,17 +72,16 @@
 				$p .= '&rsz=large';
 			}
 
-			$page = intval($this->dsParamFILTERS[$pname]);
-			if (!$page) $page = intval(trim($_REQUEST[$pname]));
+			$page = intval($this->dsParamFILTERS['p']);
 			$page -= 1; // Pagination counts from 1, not 0
 			if (!$page || $page < 0) $page = 0;
 			$p .= '&start='.($page*$size);
 
-			if ($settings['gcse']['lang'] && $settings['gcse']['lang'] != '-') $p .= '&hl='.$settings['gcse']['lang'].'&lr=lang_'.$settings['gcse']['lang'];
-			if ($settings['gcse']['cx']) $p .= '&cx='.urlencode($settings['gcse']['cx']);
-			if ($settings['gcse']['cref']) $p .= '&cref='.urlencode($settings['gcse']['cref']);
-			if ($settings['gcse']['key']) $p .= '&key='.urlencode($settings['gcse']['key']);
-			if ($settings['gcse']['safe']) $p .= '&safe='.$settings['gcse']['safe'];
+			if ($this->dsParamFILTERS['lang'] && $this->dsParamFILTERS['lang'] != '-') $p .= '&hl='.$this->dsParamFILTERS['lang'].'&lr=lang_'.$this->dsParamFILTERS['lang'];
+			if ($this->dsParamFILTERS['cx']) $p .= '&cx='.urlencode($this->dsParamFILTERS['cx']);
+			if ($this->dsParamFILTERS['cref']) $p .= '&cref='.urlencode($this->dsParamFILTERS['cref']);
+			if ($this->dsParamFILTERS['key']) $p .= '&key='.urlencode($this->dsParamFILTERS['key']);
+			if ($this->dsParamFILTERS['safe']) $p .= '&safe='.$this->dsParamFILTERS['safe'];
 
 			$googleURL = 'http://ajax.googleapis.com/ajax/services/search/web?v=1.0'.$p.'&q='.urlencode($q);
 

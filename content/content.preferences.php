@@ -66,8 +66,8 @@
 			$fieldset->appendChild(new XMLElement('legend', 'Information'));
 			$content = <<<END
 			<p>With <a href="http://www.google.com/coop/cse/" title="Read more">Google Custom Search Engine</a> and <a href="http://code.google.com/apis/ajaxsearch/">Google AJAX Search API</a> you can add search functionality to your Symphony orchestrated site.</p>
-			<p>To do that you have to add "Google Custom Search Engine" data source to page where you want to get results. Data source needs "q" parameter, which you can pass through URL schema or GET/POST variables. It also handles "p" parameter which tells it which page of search results it should provide.</p>
-			<p>For example you can put this in XSLT source of page:</p>
+			<p>To do that you have to add "Google Custom Search Engine" data source to page where you want to get results. Data source needs query parameter, which you can pass through URL schema or GET variables. It also handles page parameter, which tells it which page of search results it should provide.</p>
+			<p>For example, after configuring URL Parameters of page to "q/p" and using default settings on GCSE page, you can put this in XSLT source of page:</p>
 			<p><code>
 &lt;xsl:template match="data"&gt;<br />
 &lt;form action="{\$root}/{\$current-page}" method="GET"&gt;<br />
@@ -95,35 +95,14 @@ END;
 			$fieldset->setAttribute('class', 'settings');
 			$fieldset->appendChild(new XMLElement('legend', 'Essentials'));
 
-			$p = new XMLElement('p');
-			$p->setAttribute('class', 'help');
+			$p = new XMLElement('p', 'Use <code>{$param}</code> syntax to filter by page parameters.<br /><br />', array('class' => 'help'));
 			$p->appendChild(Widget::Anchor('Custom search', 'http://www.google.com/coop/cse/', 'Read Google Custom Search Engine documentation', 'gcse'));
 			$fieldset->appendChild($p);
 
-			$div = new XMLElement('div');
-			$div->setAttribute('class', 'group');
-
-			$label = Widget::Label('Query parameter name');
-			$label->appendChild(new XMLElement('i', 'Required. Defaults to "q".'));
-			if (!($temp = $this->_Parent->Configuration->get('qname', 'gcse'))) $temp = 'q';
+			$label = Widget::Label('Search for');
+			$label->appendChild(new XMLElement('i', 'Defaults to "{$q:$url-q}"'));
+			if (!($temp = $this->_Parent->Configuration->get('qname', 'gcse'))) $temp = '{$q:$url-q}';
 			$label->appendChild(Widget::Input('fields[qname]', $temp));
-			$div->appendChild($label);
-
-			$label = Widget::Label('Page number parameter name');
-			$label->appendChild(new XMLElement('i', 'Required. Defaults to "p".'));
-			if (!($temp = $this->_Parent->Configuration->get('pname', 'gcse'))) $temp = 'p';
-			$label->appendChild(Widget::Input('fields[pname]', $temp));
-			$div->appendChild($label);
-
-			$fieldset->appendChild($div);
-
-			$label = Widget::Label('Number of results per page');
-			$temp = $this->_Parent->Configuration->get('size', 'gcse');
-			$options = array(
-				array('4', ($temp == 4), '4 results (small)'),
-				array('8', ($temp == 8), '8 results (large)')
-			);
-			$label->appendChild(Widget::Select('fields[size]', $options));
 			$fieldset->appendChild($label);
 
 			$label = Widget::Label('API Key');
@@ -141,11 +120,17 @@ END;
 			$label->appendChild(Widget::Input('fields[cref]', $this->_Parent->Configuration->get('cref', 'gcse')));
 			$fieldset->appendChild($label);
 
+			$this->Form->appendChild($fieldset);
+
+			$fieldset = new XMLElement('fieldset');
+			$fieldset->setAttribute('class', 'settings');
+			$fieldset->appendChild(new XMLElement('legend', 'Filter results'));
+			$fieldset->appendChild(new XMLElement('p', 'Use <code>{$param}</code> syntax to filter by page parameters.', array('class' => 'help')));
+
 			$div = new XMLElement('div');
 			$div->setAttribute('class', 'group');
 
-			$label = Widget::Label('Restrict language');
-			$label->appendChild(new XMLElement('i', 'Search data in selected language'));
+			$label = Widget::Label('Language');
 			$options = array();
 			$temp = $this->_Parent->Configuration->get('lang', 'gcse');
 			foreach ($this->languages as $name => $code) {
@@ -155,7 +140,6 @@ END;
 			$div->appendChild($label);
 
 			$label = Widget::Label('Safety level');
-			$label->appendChild(new XMLElement('i', 'Safety level of search results'));
 			$vars = array('Disabled' => 'off', 'Moderate' => 'moderate', 'Active' => 'active');
 			$options = array();
 			$temp = $this->_Parent->Configuration->get('safe', 'gcse');
@@ -166,7 +150,33 @@ END;
 			$div->appendChild($label);
 
 			$fieldset->appendChild($div);
+			$this->Form->appendChild($fieldset);
 
+			$fieldset = new XMLElement('fieldset');
+			$fieldset->setAttribute('class', 'settings');
+			$fieldset->appendChild(new XMLElement('legend', 'Limiting'));
+			$fieldset->appendChild(new XMLElement('p', 'Use <code>{$param}</code> syntax to limit by page parameters.', array('class' => 'help')));
+
+			$div = new XMLElement('div');
+			$div->setAttribute('class', 'group');
+
+			$label = Widget::Label();
+			$temp = $this->_Parent->Configuration->get('size', 'gcse');
+			$options = array(
+				array('4', ($temp == 4), '4 results (small)'),
+				array('8', ($temp == 8), '8 results (large)')
+			);
+			$select = Widget::Select('fields[size]', $options, array('style' => 'width: 10em; display: inline;'));
+			$label->setValue('Show maximum of ' . $select->generate(false));
+			$div->appendChild($label);
+
+			$label = Widget::Label();
+			if (!($temp = $this->_Parent->Configuration->get('pname', 'gcse'))) $temp = '{$p:$url-p}';
+			$input = Widget::Input('fields[pname]', $temp, NULL, array('size' => 10));
+			$label->setValue('Show page ' . $input->generate(false) . ' of results');
+			$div->appendChild($label);
+
+			$fieldset->appendChild($div);
 			$this->Form->appendChild($fieldset);
 
 			$div = new XMLElement('div');
@@ -183,11 +193,11 @@ END;
 		function save() {
 			$fields = $_POST['fields'];
 
-			if ($temp = preg_replace('/[^a-zA-Z]/', '', $fields['qname'])) $this->_Parent->Configuration->set('qname', $temp, 'gcse');
-			else $this->_Parent->Configuration->set('qname', 'q', 'gcse');
+			if ($temp = trim($fields['qname'])) $this->_Parent->Configuration->set('qname', $temp, 'gcse');
+			else $this->_Parent->Configuration->set('qname', '{$q:$url-q}', 'gcse');
 
-			if ($temp = preg_replace('/[^a-zA-Z]/', '', $fields['pname'])) $this->_Parent->Configuration->set('pname', $temp, 'gcse');
-			else $this->_Parent->Configuration->set('pname', 'p', 'gcse');
+			if ($temp = trim($fields['pname'])) $this->_Parent->Configuration->set('pname', $temp, 'gcse');
+			else $this->_Parent->Configuration->set('pname', '{$p:$url-p}', 'gcse');
 
 			if ($fields['size'] == 4 || $fields['size'] == 8) {
 				$this->_Parent->Configuration->set('size', intval($fields['size']), 'gcse');
