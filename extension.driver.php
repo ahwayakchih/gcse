@@ -56,6 +56,7 @@
 					'location'	=> 300,
 					'name'		=> 'GCSE',
 					'link'		=> '/preferences/',
+					'limit'		=> 'developer',
 				)
 			);
 		}

@@ -86,6 +86,7 @@
 &lt;/xsl:template&gt;<br />
 			</code></p>
 			<p>That will allow users to enter search query, click "Search" button and get results, just like on <a href="http://google.com">Google.com</a> page.</p>
+			<p>Now all is left to do is to create <a href="http://sitemaps.org/">SiteMap</a> and ping Google to download it and index Your site :).</p>
 END;
 			$fieldset->appendChild(new XMLElement('div', $content));
 			$this->Form->appendChild($fieldset);
