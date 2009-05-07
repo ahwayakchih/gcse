@@ -134,7 +134,7 @@
 			}
 
 			if (!$data || $data->responseStatus != 200 || !is_array($data->responseData->results)) {
-				$error = new XMLElement('error', 'No data found.');
+				$error = new XMLElement('error', ($data->responseDetails ? $data->responseDetails : 'No data found.'));
 				$xml->appendChild($error);
 				return $xml;
 			}
