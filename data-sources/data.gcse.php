@@ -156,7 +156,7 @@
 				$entry = new XMLElement('entry');
 				$entry->appendChild(new XMLElement('url', $result->url));
 				$entry->appendChild(new XMLElement('title', $result->titleNoFormatting));
-				$entry->appendChild(new XMLElement('content', $result->content));
+				$entry->appendChild(new XMLElement('content', General::sanitize(html_entity_decode($result->content, ENT_QUOTES, 'UTF-8'))));
 				$xml->appendChild($entry);
 			}
 /*
