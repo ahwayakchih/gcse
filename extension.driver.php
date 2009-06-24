@@ -53,7 +53,7 @@
 		public function fetchNavigation() {
 			return array(
 				array(
-					'location'	=> 300,
+					'location'	=> __('System'),
 					'name'		=> 'GCSE',
 					'link'		=> '/preferences/',
 					'limit'		=> 'developer',
