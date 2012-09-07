@@ -3,8 +3,8 @@
 	
 		public function about(){
 			return array('name' => 'Google Custom Search Engine',
-						 'version' => '2.3',
-						 'release-date' => '2009-06-25',
+						 'version' => '2.3.1',
+						 'release-date' => '2012-09-07',
 						 'author' => array('name' => 'Marcin Konicki',
 										   'website' => 'http://ahwayakchih.neoni.net',
 										   'email' => 'ahwayakchih@neoni.net'),
