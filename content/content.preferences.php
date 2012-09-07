@@ -5,8 +5,8 @@
 
 		public $languages;
 
-		function __construct(&$parent){
-			parent::__construct($parent);
+		function __construct(){
+			parent::__construct();
 
 			$this->languages = array(
 				'Disabled'=>'-',
@@ -102,23 +102,23 @@ END;
 
 			$label = Widget::Label('Search for');
 			$label->appendChild(new XMLElement('i', 'Defaults to "{$q:$url-q}"'));
-			if (!($temp = $this->_Parent->Configuration->get('qname', 'gcse'))) $temp = '{$q:$url-q}';
+			if (!($temp = Symphony::Configuration()->get('qname', 'gcse'))) $temp = '{$q:$url-q}';
 			$label->appendChild(Widget::Input('fields[qname]', $temp));
 			$fieldset->appendChild($label);
 
 			$label = Widget::Label('API Key');
 			$label->appendChild(new XMLElement('i', 'This optional argument supplies the <a href="http://code.google.com/apis/ajaxsearch/key.html">application\'s key</a>'));
-			$label->appendChild(Widget::Input('fields[key]', $this->_Parent->Configuration->get('key', 'gcse')));
+			$label->appendChild(Widget::Input('fields[key]', Symphony::Configuration()->get('key', 'gcse')));
 			$fieldset->appendChild($label);
 
 			$label = Widget::Label('Unique identifier');
 			$label->appendChild(new XMLElement('i', 'This optional argument supplies the <a href="http://www.google.com/coop/docs/cse/resultsxml.html#cxsp">unique id</a> for the Custom Search Engine'));
-			$label->appendChild(Widget::Input('fields[cx]', $this->_Parent->Configuration->get('cx', 'gcse')));
+			$label->appendChild(Widget::Input('fields[cx]', Symphony::Configuration()->get('cx', 'gcse')));
 			$fieldset->appendChild($label);
 
 			$label = Widget::Label('URL of CSE specification');
 			$label->appendChild(new XMLElement('i', 'This optional argument supplies the url of a <a href="http://www.google.com/coop/docs/cse/cref.html">linked</a> Custom Search Engine specification'));
-			$label->appendChild(Widget::Input('fields[cref]', $this->_Parent->Configuration->get('cref', 'gcse')));
+			$label->appendChild(Widget::Input('fields[cref]', Symphony::Configuration()->get('cref', 'gcse')));
 			$fieldset->appendChild($label);
 
 			$this->Form->appendChild($fieldset);
@@ -133,7 +133,7 @@ END;
 
 			$label = Widget::Label('Language');
 			$options = array();
-			$temp = $this->_Parent->Configuration->get('lang', 'gcse');
+			$temp = Symphony::Configuration()->get('lang', 'gcse');
 			foreach ($this->languages as $name => $code) {
 				$options[] = array($code, ($code==$temp), $name);
 			}
@@ -143,7 +143,7 @@ END;
 			$label = Widget::Label('Safety level');
 			$vars = array('Disabled' => 'off', 'Moderate' => 'moderate', 'Active' => 'active');
 			$options = array();
-			$temp = $this->_Parent->Configuration->get('safe', 'gcse');
+			$temp = Symphony::Configuration()->get('safe', 'gcse');
 			foreach ($vars as $name => $code) {
 				$options[] = array($code, ($code==$temp), $name);
 			}
@@ -162,7 +162,7 @@ END;
 			$div->setAttribute('class', 'group');
 
 			$label = Widget::Label();
-			$temp = $this->_Parent->Configuration->get('size', 'gcse');
+			$temp = Symphony::Configuration()->get('size', 'gcse');
 			$options = array(
 				array('4', ($temp == 4), '4 results (small)'),
 				array('8', ($temp == 8), '8 results (large)')
@@ -172,7 +172,7 @@ END;
 			$div->appendChild($label);
 
 			$label = Widget::Label();
-			if (!($temp = $this->_Parent->Configuration->get('pname', 'gcse'))) $temp = '{$p:$url-p}';
+			if (!($temp = Symphony::Configuration()->get('pname', 'gcse'))) $temp = '{$p:$url-p}';
 			$input = Widget::Input('fields[pname]', $temp, NULL, array('size' => 10));
 			$label->setValue('Show page ' . $input->generate(false) . ' of results');
 			$div->appendChild($label);
@@ -194,25 +194,25 @@ END;
 		function save() {
 			$fields = $_POST['fields'];
 
-			if ($temp = trim($fields['qname'])) $this->_Parent->Configuration->set('qname', $temp, 'gcse');
-			else $this->_Parent->Configuration->set('qname', '{$q:$url-q}', 'gcse');
+			if ($temp = trim($fields['qname'])) Symphony::Configuration()->set('qname', $temp, 'gcse');
+			else Symphony::Configuration()->set('qname', '{$q:$url-q}', 'gcse');
 
-			if ($temp = trim($fields['pname'])) $this->_Parent->Configuration->set('pname', $temp, 'gcse');
-			else $this->_Parent->Configuration->set('pname', '{$p:$url-p}', 'gcse');
+			if ($temp = trim($fields['pname'])) Symphony::Configuration()->set('pname', $temp, 'gcse');
+			else Symphony::Configuration()->set('pname', '{$p:$url-p}', 'gcse');
 
 			if ($fields['size'] == 4 || $fields['size'] == 8) {
-				$this->_Parent->Configuration->set('size', intval($fields['size']), 'gcse');
+				Symphony::Configuration()->set('size', intval($fields['size']), 'gcse');
 			}
 
 			foreach (array('key', 'cx', 'cref') as $id) {
-				$this->_Parent->Configuration->set($id, trim($fields[$id]), 'gcse');
+				Symphony::Configuration()->set($id, trim($fields[$id]), 'gcse');
 			}
 
-			if (in_array($fields['lang'], $this->languages)) $this->_Parent->Configuration->set('lang', trim($fields['lang']), 'gcse');
+			if (in_array($fields['lang'], $this->languages)) Symphony::Configuration()->set('lang', trim($fields['lang']), 'gcse');
 
-			if (in_array($fields['safe'], array('off', 'moderate', 'active'))) $this->_Parent->Configuration->set('safe', trim($fields['safe']), 'gcse');
+			if (in_array($fields['safe'], array('off', 'moderate', 'active'))) Symphony::Configuration()->set('safe', trim($fields['safe']), 'gcse');
 
-			return $this->_Parent->saveConfig();
+			return Symphony::Engine()->saveConfig();
 		}
 	}
 
