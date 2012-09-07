@@ -2,10 +2,10 @@
 Data source: Google Custom Search Engine
 ------------------------------------
 
-Version: 2.3.1
+Version: 2.4.0
 Author: Marcin Konicki (http://ahwayakchih.neoni.net)
 Build Date: 07 September 2012
-Requirements: Symphony version 2.0.3 or later.
+Requirements: Symphony version 2.3 or later.
 
 
 [INSTALLATION]
