@@ -3,8 +3,8 @@
 	
 		public function about(){
 			return array('name' => 'Google Custom Search Engine',
-						 'version' => '2.3',
-						 'release-date' => '2009-06-25',
+						 'version' => '2.4.0',
+						 'release-date' => '2012-09-07',
 						 'author' => array('name' => 'Marcin Konicki',
 										   'website' => 'http://ahwayakchih.neoni.net',
 										   'email' => 'ahwayakchih@neoni.net'),
@@ -13,18 +13,18 @@
 		}
 
 		function install(){
-			$this->_Parent->Configuration->set('size', '4', 'gcse');
-			$this->_Parent->Configuration->set('safe', 'moderate', 'gcse');
-			return $this->_Parent->saveConfig();
+			Symphony::Configuration()->set('size', '4', 'gcse');
+			Symphony::Configuration()->set('safe', 'moderate', 'gcse');
+			return Symphony::Engine()->saveConfig();
 		}
 
 		function uninstall(){
-			$this->_Parent->Configuration->remove('gcse');
-			return $this->_Parent->saveConfig();
+			Symphony::Configuration()->remove('gcse');
+			return Symphony::Engine()->saveConfig();
 		}
 
 		function enable(){
-			if (!$this->_Parent->Configuration->get('safe', 'gcse'))
+			if (!Symphony::Configuration()->get('safe', 'gcse'))
 				return $this->install();
 			return true;
 		}
@@ -36,18 +36,18 @@
 				case 0:
 				case 2.0:
 				case 2.1:
-					if (!($temp = $this->_Parent->Configuration->get('qname', 'gcse'))) $temp = '{$q:$url-q}';
-					$this->_Parent->Configuration->set('qname', '$'.$temp.':$url-'.$temp, 'gcse');
+					if (!($temp = Symphony::Configuration()->get('qname', 'gcse'))) $temp = '{$q:$url-q}';
+					Symphony::Configuration()->set('qname', '$'.$temp.':$url-'.$temp, 'gcse');
 	
-					if (!($temp = $this->_Parent->Configuration->get('pname', 'gcse'))) $temp = '{$p:$url-p}';
-					$this->_Parent->Configuration->set('pname', '$'.$temp.':$url-'.$temp, 'gcse');
+					if (!($temp = Symphony::Configuration()->get('pname', 'gcse'))) $temp = '{$p:$url-p}';
+					Symphony::Configuration()->set('pname', '$'.$temp.':$url-'.$temp, 'gcse');
 
 				default:
 					$needSave = false;
 					break;
 			}
 
-			return ($needSave ? $this->_Parent->saveConfig() : true);
+			return ($needSave ? Symphony::Engine()->saveConfig() : true);
 		}
 
 		public function fetchNavigation() {

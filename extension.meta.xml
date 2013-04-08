@@ -1,0 +1,29 @@
+<extension id="gcse" xmlns="http://symphony-cms.com/schemas/extension/1.0">
+	<name>Data Source: Google Custom Search Engine</name>
+	<description>Use Google AJAX Search API as data source in Symphony.</description>
+	<repo type="github">https://github.com/ahwayakchih/conditionalizer</repo>
+	<url type="discuss">http://symphony-cms.com/discuss/thread/774/</url>
+	<url type="issues">https://github.com/ahwayakchih/conditionalizer/issues</url>
+	<types>
+		<type>Data Sources</type>
+		<type>Search</type>
+	</types>
+	<authors>
+		<author>
+			<name github="ahwayakchih" symphony="ahwayakchih">Marcin Konicki</name>
+			<email>ahwayakchih@neoni.net</email>
+			<website>http://ahwayakchih.neoni.net</website>
+		</author>
+	</authors>
+	<releases>
+		<release version="2.4.0" date="2012-09-07" min="2.3">
+			- Updated extension for 2.3
+		</release>
+		<release version="2.3.1" date="2012-09-07" min="2.3" max="2.2.x">
+			- Added extension.meta.xml
+		</release>
+		<release version="2.3" date="2009-06-25" min="2.0.3" max="2.1.x">
+			- Implemented fix suggested by michael-e (http://symphony-cms.com/discuss/thread/519/2/#position-36) and Nickdunn (http://symphony-cms.com/discuss/thread/519/3/#position-43). Thanks everyone :).
+		</release>
+	</releases>
+</extension>
