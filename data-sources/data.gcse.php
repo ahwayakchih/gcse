@@ -12,19 +12,17 @@
 		}
 
 		function __getParamFilters() {
-			global $settings;
-
 			$result = array(
-				'query' => ($settings['gcse']['qname'] ? $settings['gcse']['qname'] : '{$q:$url-q}'),
-				'page' => ($settings['gcse']['pname'] ? $settings['gcse']['pname'] : '{$p:$url-p}'),
-				'size' => ($settings['gcse']['size'] ? $settings['gcse']['size'] : '4'),
-				'safe' => ($settings['gcse']['safe'] ? $settings['gcse']['safe'] : 'moderate'),
+				'query' => (Symphony::Configuration()->get('qname', 'gcse') ? Symphony::Configuration()->get('qname', 'gcse') : '{$q:$url-q}'),
+				'page' => (Symphony::Configuration()->get('pname', 'gcse') ? Symphony::Configuration()->get('pname', 'gcse') : '{$p:$url-p}'),
+				'size' => (Symphony::Configuration()->get('size', 'gcse') ? Symphony::Configuration()->get('size', 'gcse') : '4'),
+				'safe' => (Symphony::Configuration()->get('safe', 'gcse') ? Symphony::Configuration()->get('safe', 'gcse') : 'moderate'),
 			);
 
-			if ($settings['gcse']['lang'] && $settings['gcse']['lang'] != '-') $result['lang'] = $settings['gcse']['lang'];
+			if (Symphony::Configuration()->get('lang', 'gcse') && Symphony::Configuration()->get('lang', 'gcse') != '-') $result['lang'] = Symphony::Configuration()->get('lang', 'gcse');
 
 			foreach (array('key', 'cx', 'cref') as $id) {
-				if ($settings['gcse'][$id]) $result[$id] = $settings['gcse'][$id];
+				if (Symphony::Configuration()->get($id, 'gcse')) $result[$id] = Symphony::Configuration()->get($id, 'gcse');
 			}
 
 			return $result;

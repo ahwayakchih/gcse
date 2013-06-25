@@ -16,6 +16,9 @@
 		</author>
 	</authors>
 	<releases>
+		<release version="2.4.1" date="2013-06-24" min="2.3">
+			- Updated extension for 2.3.3
+		</release>
 		<release version="2.4.0" date="2012-09-07" min="2.3">
 			- Updated extension for 2.3
 		</release>
